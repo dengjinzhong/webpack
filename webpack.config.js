@@ -4,8 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
+  target: ["web", "es5"],
   mode: 'development',
-  target: 'web',
   devtool: 'inline-source-map',
   entry: './src/index.js',
   devServer: {
@@ -20,6 +20,26 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.js/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: path.resolve(__dirname, './loader/replaceLoader.js'),
+            options: {
+              name: '世界123'
+            }
+          },
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [['@babel/preset-env', {
+                useBuiltIns: 'usage'
+              }]]
+            }
+          }
+        ]
+      },
       {
         test: /\.(css|scss)$/,
         use: [

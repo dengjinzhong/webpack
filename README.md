@@ -505,3 +505,108 @@ module.exports = {
 ```shell
 npm install url-loader --save-dev
 ```
+
+## 编写自定义 loader
+新建一个文件夹 loader, 并创建 replaceLoaders.js 文件
+如下：
+```javascript
+module.exports = function (source) {
+  return source.replace(/World/g, '世界')
+}
+```
+使用：
+```javascript
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js/,
+        use: [
+          path.resolve(__dirname, './loader/replaceLoader.js')
+        ]
+      }
+    ]
+  }
+}
+```
+最终所有 js 文件中 `World` 字符会替换成 `世界`
+这个就是最简单的 Loader 了， 当然我们还可以使用配置项， 使用之前要先安装一个插件，
+我们采用官方推荐的loader-utils读取options配置
+```shell
+npm install loader-utils -D
+```
+然后我们可以获取配置项了
+```javascript
+const options = loaderUtils.getOptions(this)
+```
+
+#### 应用
+1. 异常监控 function 中添加 try catch
+2. 国际化 占位符 {{title}} 替换成 中文标题（english title）
+3. 前端埋点, 去除 console.log 打印
+如果需要对源代码进行包装，那么就可以使用 Loader
+
+
+## Babel
+Babel 是一个 JavaScript 编译器
+
+当我们要是用最新语法， 却发现浏览器不兼容的时候， 我们就可以使用Babel帮助我们进行语法转换了
+
+我们使用 IE 浏览器打开我们之前启动的项目会发现报错， 这个时候我们就需要使用 Babel来进行语法转换
+
+首先我们需要安装依赖
+```shell
+npm install -D babel-loader @babel/core @babel/preset-env
+```
+webpack.config.js
+```javascript
+module: {
+  rules: [
+    {
+      test: /\.js$/,
+      exclude: /(node_modules)/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env', { target: 'es5' }]
+        }
+      }
+    }
+  ]
+}
+```
+由于我们使用的是最新版本 webpack5 , 该版本最后打包是打包成 ES6 代码的， 所以还要加上一个配置
+```javascript
+target: ["web", "es5"]
+```
+现在我们可以享受一些新语法特性带来的快捷了，但是不是所有的， 一些新的内置对象还是无法使用， 这个时候就需要使用
+babel-polyfill
+```shell
+npm install --save babel-polyfill
+```
+如果你在你的应用入口使用 ES6 的 import 语法，你需要在入口顶部通过 import 将 polyfill 引入，以确保它能够最先加载：
+```javascript
+import "babel-polyfill"
+```
+使用打包体积对比会发现差别很大
+![polyfill](./readme-img/polyfill.png)
+这是因为这样直接使用会把所有新特性都打包到源文件中, 我们希望只有使用到的新语法特性才加入语法中，
+这时我们可以在 babel-loader 中配置
+```javascript
+{
+  presets: [['@babel/preset-env', {
+    useBuiltIns: 'usage'
+  }]]
+}
+```
+`babel` 的配置有时候过多的话可以在将 `options` 内容提取放置在根目录下，创建 `.babelrc`  文件，将内容放置该文件即可
+```text
+{
+  "presets": [['@babel/preset-env', {
+    useBuiltIns: 'usage'
+  }]]
+}
+```
+
+## CodeSplitting
+将代码进行拆分

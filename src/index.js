@@ -1,8 +1,8 @@
+import "@babel/polyfill";
 import './styles/index.css'
 import './styles/common.scss'
 import { add } from "./utils/math";
 import awatar from './images/awatar.jpg'
-
 console.log('Hello World!!!')
 console.log(add(1, 2))
 const root = document.getElementById('root')
@@ -16,13 +16,23 @@ root.appendChild(btnImg)
 btn.onclick = function () {
   const div = document.createElement('div')
   div.classList.add('content')
-  div.innerText = 'Hello World!!!'
-  root.appendChild(div)
+  div.innerText = 'Hello World'
+  asyncFun().then(res => {
+    root.appendChild(div)
+  })
 }
 
-btnImg.onclick = function() {
+btnImg.onclick = () => {
   const image = document.createElement('img')
   image.src = awatar
   root.appendChild(image)
 }
 
+const asyncFun = () => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log('Promise')
+      resolve(true)
+    }, 1000)
+  })
+}
