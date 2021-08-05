@@ -470,3 +470,38 @@ module.exports = {
 同时我们需要取消 MiniCssExtractPlugin 插件使用
 
 ## 加载图片文件
+图片文件需要使用 file-loader
+安装
+```shell
+npm install file-loader -D
+```
+使用
+```javascript
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.(jpg|png)$/,
+        use: [
+          'file-loader'
+        ]
+      }
+    ]
+  }
+}
+```
+同样也可以添加打包配置
+```text
+{
+  loader: 'file-loader',
+  options: {
+    name: '[name]_[hash].[ext]',
+    outputPath: 'images/'
+  }
+}
+```
+图片文件打包除了 file-loader 外还有一个 url-loader
+安装
+```shell
+npm install url-loader --save-dev
+```

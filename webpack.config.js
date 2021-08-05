@@ -34,6 +34,19 @@ module.exports = {
           'sass-loader',
           'postcss-loader'
         ]
+      },
+      {
+        test: /\.(jpg|png)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              name: '[name]_[hash].[ext]',
+              outputPath: 'images/',
+              limit: 10000000
+            }
+          }
+        ]
       }
     ]
   },
