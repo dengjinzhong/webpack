@@ -1,6 +1,9 @@
 body {
   .content {
-    background: blue;
+    background: yellow;
     transform: translate(100px, 100px);
+    &:nth-of-type(odd) {
+      background: aqua;
+    }
   }
 }

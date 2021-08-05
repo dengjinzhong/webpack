@@ -3,3 +3,6 @@
     height: 200px;
     background: red;
 }
+.content:nth-of-type(odd) {
+    background: aqua;
+}

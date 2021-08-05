@@ -410,7 +410,6 @@ package.json
 ```
 也可以将配置配置在根目录下的 `.browserslistrc` 文件中
 
-
 #### 提取 CSS
 使用 `mini-css-extract-plugin`
 
@@ -430,7 +429,7 @@ module.exports = {
 }
 ```
 此时就不在需要 style-loader, 要更换新的 loader, 配置修改如下：
-```javascript
+```diff
 module.exports = {
   module: {
     rules: [
@@ -453,3 +452,21 @@ module.exports = {
   }
 }
 ```
+
+## 模块热替换
+模块热替换(hot module replacement 或 HMR)是 webpack 提供的最有用的功能之一。它允许在运行时更新所有类型的模块，而无需完全刷新。
+
+在 webpack 使用非常简单
+webpack.config.js
+```javascript
+module.exports = {
+  target: 'web',
+  devServer: {
+    contentBase: './dist',
+    hot: true,
+  }
+}
+```
+同时我们需要取消 MiniCssExtractPlugin 插件使用
+
+## 加载图片文件
