@@ -181,8 +181,6 @@ webpack --mode=development
 | production  | 会将 `DefinePlugin` 中 `process.env.NODE_ENV` 的值设置为 `production`。为模块和 chunk 启用确定性的混淆名称，`FlagDependencyUsagePlugin`，`FlagIncludedChunksPlugin`，`ModuleConcatenationPlugin`，`NoEmitOnErrorsPlugin` 和 `TerserPlugin` 。 |
 | none        | 不使用任何默认优化选项                                       |
 
-
-
 ## devtool
 此选项控制是否生成，以及如何生成 source map。
 
@@ -256,7 +254,7 @@ npm install -D webpack-dev-server
 ```
 
 webpack 启用本地服务器配置
-```javascript
+```text
 devServer: {
     contentBase: './dist',
     open: true,
@@ -266,9 +264,11 @@ devServer: {
 并在 `package.json` 中配置打包命令
 
 ```json
-"scripts": {
+{
+  "scripts": {
     "dev": "webpack serve",
     "build": "webpack"
+  }
 }
 ```
  执行命令
@@ -345,4 +345,111 @@ module.exports = {
 ```
 
 #### 样式处理
+使用 PostCSS 处理 CSS 的 loader
+为了使用本 loader，你需要安装 postcss-loader 和 postcss：
+```shell
+npm install --save-dev postcss-loader postcss
+```
+使用 autoprefixer 添加厂商前缀
+你需要安装 autoprefixer
+```shell
+npm install --save-dev autoprefixer
+```
+webpack.config.js
+```shell
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: { importLoaders: 1 },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  [
+                    'autoprefixer',
+                    {
+                      // 选项
+                    },
+                  ],
+                ],
+              },
+            },
+          },
+        ],
+      },
+    ],
+  },
+};
+```
+允许使用配置文件设置选项。 在配置文件中指定的选项将会和 loader option 进行合并，并且 loader option 将会覆盖配置文件中的选项。
+在根目录下创建 `postcss.config.js`
+```javascript
+module.exports = {
+  'plugins': {
+    'autoprefixer': {}
+  }
+}
+```
+此时配置好了但是还暂未起效果， 是因为缺少浏览器 Browserslist 配置
+package.json
+```json
+{
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
+```
+也可以将配置配置在根目录下的 `.browserslistrc` 文件中
 
+
+#### 提取 CSS
+使用 `mini-css-extract-plugin`
+
+安装
+```shell
+npm install mini-css-extract-plugin -D
+```
+webpack.config.js
+```javascript
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: isProductionMode ? '[name].[contenthash].css' : '[name].css',
+    }),
+  ]
+}
+```
+此时就不在需要 style-loader, 要更换新的 loader, 配置修改如下：
+```javascript
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.(css|scss)$/,
+        use: [
+ -         'style-loader',
+ +         MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2
+            }
+          },
+          'sass-loader',
+          'postcss-loader'
+        ]
+      }
+    ]
+  }
+}
+```

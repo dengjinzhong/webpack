@@ -20,8 +20,11 @@
   },
   "homepage": "https://github.com/dengjinzhong/webpack#readme",
   "devDependencies": {
+    "autoprefixer": "^10.3.1",
     "css-loader": "^6.2.0",
     "html-webpack-plugin": "^5.3.2",
+    "mini-css-extract-plugin": "^2.2.0",
+    "postcss": "^8.3.6",
     "postcss-loader": "^6.1.1",
     "sass": "^1.37.5",
     "sass-loader": "^12.1.0",
@@ -29,5 +32,9 @@
     "webpack": "^5.48.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"
-  }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
 }
