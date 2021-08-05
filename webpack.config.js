@@ -15,7 +15,7 @@ module.exports = {
   },
   output: {
     clean: true,
-    filename: `bundle[hash].js`,
+    filename: '[name][hash].js',
     path: path.resolve(__dirname, 'dist'),
   },
   module: {
@@ -69,6 +69,11 @@ module.exports = {
         ]
       }
     ]
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({

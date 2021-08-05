@@ -44,6 +44,8 @@
     "last 2 versions"
   ],
   "dependencies": {
-    "@babel/polyfill": "^7.12.1"
+    "@babel/polyfill": "^7.12.1",
+    "jquery": "^3.6.0",
+    "lodash": "^4.17.21"
   }
 }
