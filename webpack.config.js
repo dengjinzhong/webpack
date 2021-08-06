@@ -72,7 +72,41 @@ module.exports = {
   },
   optimization: {
     splitChunks: {
-      chunks: 'all'
+      chunks: 'all',
+      minSize: 0,
+      minRemainingSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
+      cacheGroups: {
+        jquery: {
+          name: 'jquery',
+          test: /[\\/]node_modules[\\/]_?jquery(.*)/,
+          priority: 10,
+          reuseExistingChunk: true,
+          filename: "jquery-[chunkhash].min.js"
+        },
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true,
+          filename: "vendors-[chunkhash].js"
+        },
+        utils: {
+          name: 'utils',
+          test: path.resolve(__dirname, './src/utils'),
+          priority: -15,
+          reuseExistingChunk: true,
+          filename: "utils-[chunkhash].js"
+        },
+        default: {
+          minChunks: 1,
+          priority: -20,
+          reuseExistingChunk: true,
+          filename: "common-[hash].js"
+        },
+      },
     }
   },
   plugins: [

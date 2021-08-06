@@ -610,3 +610,101 @@ import "babel-polyfill"
 
 ## CodeSplitting
 将代码进行拆分
+
+开箱即用的 SplitChunksPlugin 对于大部分用户来说非常友好。
+
+默认情况下，它只会影响到按需加载的 chunks，因为修改 initial chunks 会影响到项目的 HTML 文件中的脚本标签。
+
+webpack 将根据以下条件自动拆分 chunks：
+
+新的 chunk 可以被共享，或者模块来自于 node_modules 文件夹
+新的 chunk 体积大于 20kb（在进行 min+gz 之前的体积）
+当按需加载 chunks 时，并行请求的最大数量小于或等于 30
+当加载初始化页面时，并发请求的最大数量小于或等于 30
+当尝试满足最后两个条件时，最好使用较大的 chunks。
+
+```javascript
+module.exports = {
+  //...
+  optimization: {
+    splitChunks: {
+      chunks: 'async',
+      minSize: 20000,
+      minRemainingSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+  },
+};
+```
+
+这是 webpack5 给出的默认配置， 为了演示我们需要做一些更改，
+```javascript
+module.exports = {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      minSize: 0,
+    }
+  }
+}
+```
+
+这是我们可以看到打包目录多出一个 js 文件， 这个就是所有 `node_modules` 下的 `polyfill`
+打包的内容
+
+#### 打包jQuery
+我们项目中引入 jQuery 改写代码， 在进行打包会发现还是两个 js 文件，说明 jQuery 和 polyfill
+都打包到一起了， 这个时候我们可以对打包分组进行配置， 让代码分离出来
+```javascript
+module.exports = {
+  optimization: {
+    splitChunks: {
+      // ...
+      cacheGroups: {
+        name: 'jquery',
+        test: /[\\/]node_modules[\\/]_?jquery(.*)/,
+        priority: 10,
+        reuseExistingChunk: true,
+        filename: "jquery-[chunkhash].min.js"
+      }
+    }
+  }
+}
+```
+这个时候打包后会发现， jQuery 单独作为一个文件了
+
+#### 打包公共方法
+一般我们开发的时候公共方法是很少改动的， 现在我们把业务逻辑抽离出公共方法放到
+`utils` 文件夹下， 然后在进行配置
+```javascript
+module.exports = {
+  optimization: {
+    splitChunks: {
+      // ...
+      utils: {
+        name: 'utils',
+        test: path.resolve(__dirname, './src/utils'),
+        priority: 5,
+        reuseExistingChunk: true,
+        filename: "utils-[chunkhash].js"
+      },
+    }
+  }
+}
+```
+这时候所有公共方法都打包到 utils 文件下， 修改 `index.js` 代码后在进行打包后会发现 utils 下文件不会重新打包
