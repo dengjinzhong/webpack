@@ -708,3 +708,19 @@ module.exports = {
 }
 ```
 这时候所有公共方法都打包到 utils 文件下， 修改 `index.js` 代码后在进行打包后会发现 utils 下文件不会重新打包
+
+## TreeShaking
+中文翻译意思为： 摇树
+意思就是通过摇树动作把没有用的东西摇下来， 在代码中就是将引入并未使用的代码通过 TreeShaking 过滤不会打包到源代码中，
+webpack5 内置了这个功能， 具体原理可以查看相关文档
+
+TODO
+## 多页面打包
+查看具体项目
+
+## 环境变量
+* 开发环境
+* 生产环境
+
+## vue 项目配置
+(Vue Cli)[https://cli.vuejs.org/zh/guide/]
